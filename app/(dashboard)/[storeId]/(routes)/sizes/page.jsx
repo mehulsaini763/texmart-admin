@@ -1,12 +1,12 @@
 import { format } from 'date-fns';
-
 import SizeClient from './_components/SizeClient';
-
-import { getSizes } from '@/utils/size';
+import dbConnect from '@/lib/db';
+import Size from '@/models/sizes.model';
 
 const SizesPage = async ({ params }) => {
-  const response = await getSizes(params);
-  const formatedSizes = response.data.map((item) => ({
+  await dbConnect();
+  const sizes = await Size.find({ storeId: params.storeId });
+  const formatedSizes = sizes.map((item) => ({
     id: item._id,
     name: item.name,
     value: item.value,

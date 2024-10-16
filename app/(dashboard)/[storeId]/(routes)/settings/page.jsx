@@ -1,26 +1,27 @@
 import { redirect } from 'next/navigation';
 import SettingsForm from './_components/SettingsForm';
-import { getUser } from '@/utils/auth';
-import { getStore } from '@/utils/store';
+import { auth } from '@/lib/auth';
+import dbConnect from '@/lib/db';
+import Store from '@/models/stores.model';
 
 const SettingsPage = async ({ params }) => {
-  const user = await getUser();
+  const session = await auth();
 
-  if (!user) {
+  if (!session) {
     console.log('Session Expired');
     redirect('/login');
-  } else console.log('Authorized');
+  }
 
-  const store = await getStore(params);
+  await dbConnect()
+  const store = await Store.findById(params.storeId);
 
-  if (!store.data) {
-    console.log(store.message);
+  if (!store) {
     redirect('/');
-  } else console.log(store.message);
+  }
 
   return (
     <div className="flex flex-col gap-4 p-8">
-      <SettingsForm store={store.data} />
+      <SettingsForm store={store} />
     </div>
   );
 };

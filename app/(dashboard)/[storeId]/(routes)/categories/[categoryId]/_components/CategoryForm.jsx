@@ -3,22 +3,20 @@
 import { useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 
+import { useForm } from 'react-hook-form';
+import * as z from 'zod';
+import { zodResolver } from '@hookform/resolvers/zod';
+import toast from 'react-hot-toast';
+import axios from 'axios';
+
+import { Trash } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import Heading from '@/components/ui/heading';
 import { Input } from '@/components/ui/input';
 import { Separator } from '@/components/ui/separator';
-import { Trash } from 'lucide-react';
-import toast from 'react-hot-toast';
-
-import { useForm } from 'react-hook-form';
-import * as z from 'zod';
-import { zodResolver } from '@hookform/resolvers/zod';
-
-import AlertModal from '@/components/modals/AlertModal';
-import { createCategory, deleteCategory, updateCategory } from '@/utils/category';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { getUser } from '@/utils/auth';
+import AlertModal from '@/components/modals/AlertModal';
 
 const formScheme = z.object({
   name: z.string().min(1),
@@ -49,16 +47,14 @@ const CategoryForm = ({ billboards, category }) => {
   const onSubmit = async (data) => {
     try {
       setLoading(true);
-      const user = await getUser();
       const response = category
-        ? await updateCategory(params, { userId: user._id, data })
-        : await createCategory(params, { userId: user._id, data });
+        ? (await axios.patch(`/api/stores/${params.storeId}/categories/${params.categoryId}`, data)).data
+        : (await axios.post(`/api/stores/${params.storeId}/categories/`, data)).data;
       toast.success(response.message);
       router.push(`/${params.storeId}/categories`);
       router.refresh();
     } catch (error) {
-      toast.error(error.response.message);
-
+      toast.error(error.response.data.message);
       setLoading(false);
     }
   };
@@ -66,14 +62,13 @@ const CategoryForm = ({ billboards, category }) => {
   const onDelete = async () => {
     try {
       setLoading(true);
-      const user = await getUser();
-      const response = await deleteCategory(params, { userId: user._id });
+      const response = (await axios.delete(`/api/stores/${params.storeId}/categories/${params.categoryId}`)).data;
       toast.success(response.message);
       router.push(`/${params.storeId}/categories`);
       router.refresh();
     } catch (error) {
       setLoading(false);
-      toast.error(error.response.message);
+      toast.error(error.response.data.message);
     }
   };
 

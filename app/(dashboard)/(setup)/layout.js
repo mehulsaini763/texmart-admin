@@ -1,19 +1,20 @@
 import { redirect } from 'next/navigation';
-
-import { getUser } from '@/utils/auth';
-import { getStores } from '@/utils/store';
+import Store from '@/models/stores.model';
+import { auth } from '@/lib/auth';
+import dbConnect from '@/lib/db';
 
 const SetupLayout = async ({ children }) => {
-  const user = await getUser();
+  const session = await auth();
 
-  if (!user) {
+  if (!session) {
     redirect('/login');
   }
 
-  const stores = await getStores({ userId: user._id });
+  await dbConnect();
+  const stores = await Store.find({ userId: session.user.id });
 
-  if (stores.data.length != 0) {
-    redirect(`/${stores.data[0]._id}`);
+  if (stores.length != 0) {
+    redirect(`/${stores[0]._id}`);
   }
 
   return children;

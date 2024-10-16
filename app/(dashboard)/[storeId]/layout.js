@@ -1,23 +1,24 @@
 import { redirect } from 'next/navigation';
-
 import Navbar from '@/components/Navbar';
-
-import { getUser } from '@/utils/auth';
-import { getStore } from '@/utils/store';
+import { auth } from '@/lib/auth';
+import dbConnect from '@/lib/db';
+import Store from '@/models/stores.model';
 
 const DashboardLayout = async ({ children, params }) => {
-  const user = await getUser();
+  const session = await auth();
 
-  if (!user) {
+  if (!session) {
     console.log('Session Expired');
     redirect('/login');
-  } else console.log('Authorized');
+  }
 
-  const store = await getStore(params);
+  await dbConnect();
+  const store = await Store.findById(params.storeId);
 
-  if (!store.data) {
+  if (!store) {
     redirect('/');
   }
+
   return (
     <>
       <Navbar />

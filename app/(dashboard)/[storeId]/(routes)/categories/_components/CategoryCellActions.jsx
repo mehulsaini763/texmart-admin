@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 
+import axios from 'axios';
 import toast from 'react-hot-toast';
 
 import { Copy, Edit, MoreHorizontal, Trash } from 'lucide-react';
@@ -13,8 +14,6 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import AlertModal from '@/components/modals/AlertModal';
-import { deleteCategory } from '@/utils/category';
-import { getUser } from '@/utils/auth';
 
 const CategoryCellActions = ({ data }) => {
   const router = useRouter();
@@ -30,12 +29,11 @@ const CategoryCellActions = ({ data }) => {
   const onDelete = async () => {
     try {
       setLoading(true);
-      const user = await getUser();
-      const response = await deleteCategory({ categoryId: data.id, ...params }, { userId: user._id });
+      const response = (await axios.delete(`/api/stores/${params.storeId}/categories/${data.id}`)).data;
       toast.success(response.message);
       router.refresh();
     } catch (error) {
-      toast.error(error.response.message);
+      toast.error(error.response.data.message);
       setLoading(false);
       setOpen(false);
     }

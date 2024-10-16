@@ -1,13 +1,13 @@
 import { format } from 'date-fns';
-
 import OrderClient from './_components/OrderClient';
-
-import { getOrders } from '@/utils/order';
 import { formatter } from '@/lib/utils';
+import dbConnect from '@/lib/db';
+import Order from '@/models/orders.model';
 
 const OrdersPage = async ({ params }) => {
-  const response = await getOrders(params);
-  const formatedOrders = response.data.map((item) => ({
+  await dbConnect();
+  const orders = await Order.find({ storeId: params.storeId });
+  const formatedOrders = orders.map((item) => ({
     id: item._id,
     orderItems: item.orderItems,
     isPaid: item.isPaid,

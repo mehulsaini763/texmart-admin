@@ -1,20 +1,20 @@
-/** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: false,
   images: {
-    remotePatterns: [ {
-      protocol: 'https',
-      hostname: '"res.cloudinary.com"',
-      port: '',
-    }],
-  },
-  async rewrites() {
-    return [
+    remotePatterns: [
       {
-        source: '/api/:path*',
-        destination: 'http://localhost:5000/api/v1/:path*', // Proxy to Backend
+        protocol: 'https',
+        hostname: 'res.cloudinary.com',
+        port: '', // Optional, only if your URLs use a non-standard port
+        pathname: '/**', // Allows all paths, adjust if needed
       },
-    ];
+      {
+        protocol: 'http',
+        hostname: 'res.cloudinary.com',
+        port: '', // Optional, only if your URLs use a non-standard port
+        pathname: '/**', // Allows all paths, adjust if needed
+      },
+    ],
   },
 };
 

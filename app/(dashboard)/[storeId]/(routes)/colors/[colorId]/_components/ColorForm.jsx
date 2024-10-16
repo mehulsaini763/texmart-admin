@@ -3,21 +3,19 @@
 import { useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 
+import { useForm } from 'react-hook-form';
+import * as z from 'zod';
+import { zodResolver } from '@hookform/resolvers/zod';
+import toast from 'react-hot-toast';
+import axios from 'axios';
+
+import { Trash } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import Heading from '@/components/ui/heading';
 import { Input } from '@/components/ui/input';
 import { Separator } from '@/components/ui/separator';
-import { Trash } from 'lucide-react';
-import toast from 'react-hot-toast';
-
-import { useForm } from 'react-hook-form';
-import * as z from 'zod';
-import { zodResolver } from '@hookform/resolvers/zod';
-
 import AlertModal from '@/components/modals/AlertModal';
-import { createColor, deleteColor, updateColor } from '@/utils/color';
-import { getUser } from '@/utils/auth';
 
 const formScheme = z.object({
   name: z.string().min(1),
@@ -48,15 +46,14 @@ const ColorForm = ({ color }) => {
   const onSubmit = async (data) => {
     try {
       setLoading(true);
-      const user = await getUser();
       const response = color
-        ? await updateColor(params, { userId: user._id, data })
-        : await createColor(params, { userId: user._id, data });
+        ? (await axios.patch(`/api/stores/${params.storeId}/colors/${params.colorId}`, data)).data
+        : (await axios.post(`/api/stores/${params.storeId}/colors/`, data)).data;
       toast.success(response.message);
       router.push(`/${params.storeId}/colors`);
       router.refresh();
     } catch (error) {
-      toast.error(response.message);
+      toast.error(error.response.data.message);
       setLoading(false);
     }
   };
@@ -64,12 +61,12 @@ const ColorForm = ({ color }) => {
   const onDelete = async () => {
     try {
       setLoading(true);
-      const response = await deleteColor(color);
+      const response = (await axios.delete(`/api/stores/${params.storeId}/colors/${params.colorId}`)).data;
       toast.success(response.message);
       router.push(`/${params.storeId}/colors`);
       router.refresh();
     } catch (error) {
-      toast.error(error.response.message);
+      toast.error(error.response.data.message);
       setLoading(false);
     }
   };

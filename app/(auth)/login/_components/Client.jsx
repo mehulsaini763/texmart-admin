@@ -1,6 +1,7 @@
 'use client';
 
 import { useRouter } from 'next/navigation';
+import { signIn } from 'next-auth/react';
 
 import { Form, FormField, FormItem, FormControl, FormLabel, FormMessage } from '@/components/ui/form';
 import { Button } from '@/components/ui/button';
@@ -10,9 +11,6 @@ import toast from 'react-hot-toast';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
-
-import axios from 'axios';
-import { setCookie } from '@/utils/cookie';
 
 const formSchema = z.object({
   email: z.string().toLowerCase().email(),
@@ -31,9 +29,8 @@ const LoginClient = () => {
 
   const onSubmit = async (data) => {
     try {
-      const response = await axios.post(`/api/auth/admin/login`, data);
-      await setCookie('TEXMART_ADMIN_USER', response.data.data, '6h');
-      toast.success(response.data.message);
+      await signIn('credentials', { redirect: false, ...data });
+      toast.success('Logged In');
       return true;
     } catch (err) {
       console.log(err);

@@ -2,22 +2,21 @@
 import { useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 
+import { useForm } from 'react-hook-form';
+import * as z from 'zod';
+import { zodResolver } from '@hookform/resolvers/zod';
+
+import { Trash } from 'lucide-react';
+import toast from 'react-hot-toast';
+import axios from 'axios';
+
 import { Button } from '@/components/ui/button';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import Heading from '@/components/ui/heading';
 import { Input } from '@/components/ui/input';
 import { Separator } from '@/components/ui/separator';
-import { Trash } from 'lucide-react';
-import toast from 'react-hot-toast';
-
-import { useForm } from 'react-hook-form';
-import * as z from 'zod';
-import { zodResolver } from '@hookform/resolvers/zod';
-
-import { deleteStore, updateStore } from '@/utils/store';
 import AlertModal from '@/components/modals/AlertModal';
 import ApiAlert from '@/components/ui/api-alert';
-import { getUser } from '@/utils/auth';
 
 const formScheme = z.object({
   storeName: z.string().min(1),
@@ -38,11 +37,11 @@ const SettingsForm = ({ store }) => {
   const onSubmit = async (data) => {
     try {
       setLoading(true);
-      const user = await getUser();
-      const response = await updateStore(params, { userId: user._id, data: { userId: user._id, ...data } });
+      const response = (await axios.patch(`/api/stores/${params.storeId}`, data)).data;
       toast.success(response.message);
     } catch (error) {
-      toast.error(error.response.message);
+      console.log(error);
+      toast.error(error.response.data.message);
     } finally {
       setLoading(false);
       router.refresh();
@@ -52,11 +51,10 @@ const SettingsForm = ({ store }) => {
   const onDelete = async () => {
     try {
       setLoading(true);
-      const user = await getUser();
-      const response = await deleteStore(params, { userId: user._id });
+      const response = (await axios.delete(`/api/stores/${params.storeId}`)).data;
       toast.success(response.message);
     } catch (error) {
-      toast.error(error.response.message);
+      toast.error(error.response.data.message);
     } finally {
       setLoading(false);
       router.push('/');
@@ -97,7 +95,7 @@ const SettingsForm = ({ store }) => {
         </form>
       </Form>
       <Separator />
-      <ApiAlert title="GET" description={`${process.env.NEXT_PUBLIC_CLIENT_BASE_URL}/api/stores/${params.storeId}`} variant="public" />
+      <ApiAlert title="GET" description={`${process.env.NEXT_PUBLIC_BASE_URL}/api/stores/${params.storeId}`} variant="public" />
     </>
   );
 };

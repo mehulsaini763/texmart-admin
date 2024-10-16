@@ -3,22 +3,20 @@
 import { useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 
+import { useForm } from 'react-hook-form';
+import * as z from 'zod';
+import { zodResolver } from '@hookform/resolvers/zod';
+import toast from 'react-hot-toast';
+import axios from 'axios';
+
+import { Trash } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import Heading from '@/components/ui/heading';
 import { Input } from '@/components/ui/input';
 import { Separator } from '@/components/ui/separator';
-import { Trash } from 'lucide-react';
-import toast from 'react-hot-toast';
-
-import { useForm } from 'react-hook-form';
-import * as z from 'zod';
-import { zodResolver } from '@hookform/resolvers/zod';
-
 import AlertModal from '@/components/modals/AlertModal';
 import ImageUpload from '@/components/ui/image-upload';
-import { createBillboard, deleteBillboard, updateBillboard } from '@/utils/billboard';
-import { getUser } from '@/utils/auth';
 
 const formScheme = z.object({
   label: z.string().min(1),
@@ -49,15 +47,14 @@ const BillboardForm = ({ billboard }) => {
   const onSubmit = async (data) => {
     try {
       setLoading(true);
-      const user = await getUser();
       const response = billboard
-        ? await updateBillboard(params, { userId: user._id, data })
-        : await createBillboard(params, { userId: user._id, data });
+        ? (await axios.patch(`/api/stores/${params.storeId}/billboards/${params.billboardId}`, data)).data
+        : (await axios.post(`/api/stores/${params.storeId}/billboards/`, data)).data;
       toast.success(response.message);
       router.push(`/${params.storeId}/billboards`);
       router.refresh();
     } catch (error) {
-      toast.error(response.message);
+      toast.error(error.response.data.message);
       setLoading(false);
     }
   };
@@ -65,13 +62,12 @@ const BillboardForm = ({ billboard }) => {
   const onDelete = async () => {
     try {
       setLoading(true);
-      const user = await getUser();
-      const response = await deleteBillboard(params, { userId: user._id });
+      const response = (await axios.delete(`/api/stores/${params.storeId}/billboards/${params.billboardId}`)).data;
       toast.success(response.message);
       router.push(`/${params.storeId}/billboards`);
       router.refresh();
     } catch (error) {
-      toast.error(error.response.message);
+      toast.error(error.response.data.message);
       setLoading(false);
     }
   };

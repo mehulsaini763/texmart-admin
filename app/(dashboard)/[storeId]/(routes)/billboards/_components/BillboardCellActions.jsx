@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 
+import axios from 'axios';
 import toast from 'react-hot-toast';
 
 import { Copy, Edit, MoreHorizontal, Trash } from 'lucide-react';
@@ -13,8 +14,6 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import AlertModal from '@/components/modals/AlertModal';
-import { deleteBillboard } from '@/utils/billboard';
-import { getUser } from '@/utils/auth';
 
 const BillboardCellActions = ({ data }) => {
   const router = useRouter();
@@ -30,8 +29,7 @@ const BillboardCellActions = ({ data }) => {
   const onDelete = async () => {
     try {
       setLoading(true);
-      const user = await getUser();
-      const response = await deleteBillboard({ billboardId: data.id, ...params }, { userId: user._id });
+      const response = await axios.delete(`/api/stores/${params.storeId}/billboards/${data.id}`);
       toast.success(response.message);
       router.refresh();
     } catch (error) {

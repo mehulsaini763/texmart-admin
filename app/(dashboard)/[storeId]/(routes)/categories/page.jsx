@@ -1,13 +1,12 @@
 import { format } from 'date-fns';
-
 import CategoryClient from './_components/CategoryClient';
-import { getCategories } from '@/utils/category';
+import dbConnect from '@/lib/db';
+import Categories from '@/models/categories.model';
 
 const CategoriesPage = async ({ params }) => {
-  const categories = await getCategories(params);
-  console.log(categories);
-  
-  const formattedCategories = categories.data.map((item) => ({
+  await dbConnect();
+  const categories = await Categories.find({ storeId: params.storeId }).populate('billboardId');
+  const formattedCategories = categories.map((item) => ({
     id: item._id,
     name: item.name,
     billboardLabel: item.billboardId.label,

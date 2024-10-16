@@ -19,6 +19,7 @@ import { cn } from "@/lib/utils";
 import { Button } from "./ui/button";
 
 const StoreSwitcher = ({ className, stores }) => {
+  const [open, setOpen] = useState(false);
   const { onOpen } = useStoreModal();
   const params = useParams();
   const router = useRouter();
@@ -34,8 +35,6 @@ const StoreSwitcher = ({ className, stores }) => {
 
   const onStoreSelect = (store) => router.push(`/${store.value}`);
 
-  const [open, setOpen] = useState(false);
-// onOpen(true)
   return (
     <Popover>
       <PopoverTrigger asChild>

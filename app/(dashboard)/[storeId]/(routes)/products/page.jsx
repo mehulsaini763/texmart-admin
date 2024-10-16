@@ -1,13 +1,13 @@
 import { format } from 'date-fns';
-
 import ProductClient from './_components/ProductClient';
-
-import { getProducts } from '@/utils/product';
+import dbConnect from '@/lib/db';
+import Product from '@/models/products.model';
 import { formatter } from '@/lib/utils';
 
 const ProductsPage = async ({ params }) => {
-  const response = await getProducts(params);
-  const formatedProducts = response.data.map((item) => ({
+  await dbConnect();
+  const products = await Product.find({ storeId: params.storeId });
+  const formatedProducts = products.map((item) => ({
     id: item._id,
     name: item.name,
     isFeatured: item.isFeatured,

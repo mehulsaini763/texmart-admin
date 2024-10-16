@@ -6,7 +6,7 @@ import ApiAlert from './api-alert';
 const ApiList = ({ entityName, entityIdName }) => {
   const params = useParams();
 
-  const baseUrl = `${process.env.NEXT_PUBLIC_CLIENT_BASE_URL}/api/stores/${params.storeId}`;
+  const baseUrl = `${process.env.NEXT_PUBLIC_BASE_URL}/api/stores/${params.storeId}`;
 
   return (
     <>

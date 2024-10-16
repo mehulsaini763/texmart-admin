@@ -1,17 +1,19 @@
-import { getUser } from '@/utils/auth';
-import { getStore } from '@/utils/store';
 import { redirect } from 'next/navigation';
+import { auth } from '@/lib/auth';
+import dbConnect from '@/lib/db';
+import Store from '@/models/stores.model';
 
 const DashboardPage = async ({ params }) => {
-  const user = await getUser();
+  const session = await auth();
 
-  if (!user) {
+  if (!session) {
     redirect('/login');
   }
 
-  const store = await getStore(params);
+  await dbConnect();
+  const store = await Store.findById(params.storeId);
 
-  return <div>Active Store = {store.data.storeName}</div>;
+  return <div>Active Store = {store.storeName}</div>;
 };
 
 export default DashboardPage;

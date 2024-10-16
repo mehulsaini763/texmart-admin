@@ -1,18 +1,17 @@
 import MainNav from './MainNav';
 import StoreSwitcher from './StoreSwitcher';
-
-import { getStores } from '@/utils/store';
-import { getUser } from '@/utils/auth';
+import Store from '@/models/stores.model';
+import { auth } from '@/lib/auth';
+import Profile from './Profile';
 
 const Navbar = async () => {
-  const user = await getUser();
-  const stores = await getStores({ userId: user._id });
-
+  const { user } = await auth();
+  const stores = await Store.find({ userId: user.id });
   return (
     <div className="p-2 lg:p-4 flex items-center justify-between gap-4 border-b">
-      <StoreSwitcher stores={stores.data} />
+      <StoreSwitcher stores={stores} />
       <MainNav />
-      <div>USER</div>
+      <Profile user={user} />
     </div>
   );
 };

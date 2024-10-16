@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 
 import toast from 'react-hot-toast';
+import axios from 'axios';
 
 import { Copy, Edit, MoreHorizontal, Trash } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -13,8 +14,6 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import AlertModal from '@/components/modals/AlertModal';
-import { deleteColor } from '@/utils/color';
-import { getUser } from '@/utils/auth';
 
 const ColorCellActions = ({ data }) => {
   const router = useRouter();
@@ -30,12 +29,11 @@ const ColorCellActions = ({ data }) => {
   const onDelete = async () => {
     try {
       setLoading(true);
-      const user = await getUser();
-      const response = await deleteColor({ colorId: data.id, ...params }, { userId: user._id });
+      const response = (await axios.delete(`/api/stores/${params.storeId}/colors/${data.id}`)).data;
       toast.success(response.message);
       router.refresh();
     } catch (error) {
-      toast.error(error.response.message);
+      toast.error(error.response.data.message);
       setLoading(false);
     }
   };

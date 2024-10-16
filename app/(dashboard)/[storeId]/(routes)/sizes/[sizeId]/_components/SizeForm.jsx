@@ -3,21 +3,19 @@
 import { useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 
+import { useForm } from 'react-hook-form';
+import * as z from 'zod';
+import { zodResolver } from '@hookform/resolvers/zod';
+import axios from 'axios';
+import toast from 'react-hot-toast';
+
+import { Trash } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import Heading from '@/components/ui/heading';
 import { Input } from '@/components/ui/input';
 import { Separator } from '@/components/ui/separator';
-import { Trash } from 'lucide-react';
-import toast from 'react-hot-toast';
-
-import { useForm } from 'react-hook-form';
-import * as z from 'zod';
-import { zodResolver } from '@hookform/resolvers/zod';
-
 import AlertModal from '@/components/modals/AlertModal';
-import { createSize, deleteSize, updateSize } from '@/utils/size';
-import { getUser } from '@/utils/auth';
 
 const formScheme = z.object({
   name: z.string().min(1),
@@ -48,10 +46,9 @@ const SizeForm = ({ size }) => {
   const onSubmit = async (data) => {
     try {
       setLoading(true);
-      const user = await getUser();
       const response = size
-        ? await updateSize(params, { userId: user._id, data })
-        : await createSize(params, { userId: user._id, data });
+        ? (await axios.patch(`/api/stores/${params.storeId}/sizes/${params.sizeId}`, data)).data
+        : (await axios.post(`/api/stores/${params.storeId}/sizes/`, data)).data;
       toast.success(response.message);
       router.push(`/${params.storeId}/sizes`);
       router.refresh();
@@ -64,7 +61,7 @@ const SizeForm = ({ size }) => {
   const onDelete = async () => {
     try {
       setLoading(true);
-      const response = await deleteSize(size);
+      const response = (await axios.delete(`/api/stores/${params.storeId}/sizes/${params.sizeId}`)).data;
       toast.success(response.message);
       router.push(`/${params.storeId}/sizes`);
       router.refresh();

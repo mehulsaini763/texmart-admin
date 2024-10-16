@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 
 import toast from 'react-hot-toast';
+import axios from 'axios';
 
 import { Copy, Edit, MoreHorizontal, Trash } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -13,7 +14,6 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import AlertModal from '@/components/modals/AlertModal';
-import { deleteSize } from '@/utils/size';
 
 const SizeCellActions = ({ data }) => {
   const router = useRouter();
@@ -29,7 +29,7 @@ const SizeCellActions = ({ data }) => {
   const onDelete = async () => {
     try {
       setLoading(true);
-      const response = await deleteSize(params, { colorId: data.id });
+      const response = (await axios.delete(`/api/stores/${params.storeId}/sizes/${data.id}`)).data;
       toast.success(response.message);
       router.refresh();
     } catch (error) {

@@ -3,24 +3,22 @@
 import { useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 
+import { useForm } from 'react-hook-form';
+import * as z from 'zod';
+import { zodResolver } from '@hookform/resolvers/zod';
+import toast from 'react-hot-toast';
+import axios from 'axios';
+
+import { Trash } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import Heading from '@/components/ui/heading';
 import { Input } from '@/components/ui/input';
 import { Separator } from '@/components/ui/separator';
-import { Trash } from 'lucide-react';
-import toast from 'react-hot-toast';
-
-import { useForm } from 'react-hook-form';
-import * as z from 'zod';
-import { zodResolver } from '@hookform/resolvers/zod';
-
-import AlertModal from '@/components/modals/AlertModal';
-import ImageUpload from '@/components/ui/image-upload';
-import { createProduct, deleteProduct, updateProduct } from '@/utils/product';
-import { getUser } from '@/utils/auth';
 import { Checkbox } from '@/components/ui/checkbox';
+import ImageUpload from '@/components/ui/image-upload';
+import AlertModal from '@/components/modals/AlertModal';
 
 const formScheme = z.object({
   name: z.string().min(1),
@@ -63,15 +61,14 @@ const ProductForm = ({ product, categories, sizes, colors }) => {
   const onSubmit = async (data) => {
     try {
       setLoading(true);
-      const user = await getUser();
       const response = product
-        ? await updateProduct(params, { userId: user._id, data })
-        : await createProduct(params, { userId: user._id, data });
+        ? (await axios.patch(`/api/stores/${params.storeId}/products/${params.productId}`, data)).data
+        : (await axios.post(`/api/stores/${params.storeId}/products/`, data)).data;
       toast.success(response.message);
       router.push(`/${params.storeId}/products`);
       router.refresh();
     } catch (error) {
-      toast.error(error.response.message);
+      toast.error(error.response.data.message);
       setLoading(false);
     }
   };
@@ -79,13 +76,12 @@ const ProductForm = ({ product, categories, sizes, colors }) => {
   const onDelete = async () => {
     try {
       setLoading(true);
-      const user = await getUser();
-      const response = await deleteProduct(params, { userId: user._id });
+      const response = (await axios.delete(`/api/stores/${params.storeId}/products/${params.productId}`)).data;
       toast.success(response.message);
       router.push(`/${params.storeId}/products`);
       router.refresh();
     } catch (error) {
-      toast.error(error.response.message);
+      toast.error(error.response.data.message);
       setLoading(false);
     }
   };

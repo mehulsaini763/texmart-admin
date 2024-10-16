@@ -1,12 +1,14 @@
 import BillboardForm from './_components/BillboardForm';
-
-import { getBillboard } from '@/utils/billboard';
+import dbConnect from '@/lib/db';
+import Billboard from '@/models/billboards.model';
+import mongoose from 'mongoose';
 
 const BillboardsPage = async ({ params }) => {
-  const response = await getBillboard(params);
+  await dbConnect();
+  const billboard = mongoose.isValidObjectId(params.billboardId) ? await Billboard.findById(params.billboardId) : null;
   return (
     <div className="flex flex-col gap-4 p-8">
-      <BillboardForm billboard={response.data} />
+      <BillboardForm billboard={billboard} />
     </div>
   );
 };

@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 
+import axios from 'axios';
 import toast from 'react-hot-toast';
 
 import { Copy, Edit, MoreHorizontal, Trash } from 'lucide-react';
@@ -13,8 +14,6 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import AlertModal from '@/components/modals/AlertModal';
-import { deleteProduct } from '@/utils/product';
-import { getUser } from '@/utils/auth';
 
 const ProductCellActions = ({ data }) => {
   const router = useRouter();
@@ -30,12 +29,11 @@ const ProductCellActions = ({ data }) => {
   const onDelete = async () => {
     try {
       setLoading(true);
-      const user = await getUser();
-      const response = await deleteProduct({ productId: data.id, ...params }, { userId: user._id });
+      const response = (await axios.delete(`/api/stores/${params.storeId}/products/${data.id}`)).data;
       toast.success(response.message);
       router.refresh();
     } catch (error) {
-      toast.error(error.response.message);
+      toast.error(error.response.data.message);
       setLoading(false);
       setOpen(false);
     }
@@ -66,9 +64,7 @@ const ProductCellActions = ({ data }) => {
         </DropdownMenuContent>
       </DropdownMenu>
       <AlertModal isOpen={open} onClose={() => setOpen(false)} onConfirm={onDelete} loading={loading}>
-        <div className="p-4 text-red-500 italic text-sm">
-          [NOTE]: All Images related to this Product will be Deleted as well
-        </div>
+        <div className="p-4 text-red-500 italic text-sm">[NOTE]: All Images related to this Product will be Deleted as well</div>
       </AlertModal>
     </div>
   );

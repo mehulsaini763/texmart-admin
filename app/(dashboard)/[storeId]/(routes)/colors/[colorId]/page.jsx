@@ -1,14 +1,14 @@
 import ColorForm from './_components/ColorForm';
-
-import { getColor } from '@/utils/color';
+import dbConnect from '@/lib/db';
+import Color from '@/models/colors.model';
+import mongoose from 'mongoose';
 
 const ColorPage = async ({ params }) => {
-  console.log(params);
-
-  const color = await getColor(params);
+  await dbConnect();
+  const color = mongoose.isValidObjectId(params.categoryId) ? await Color.findById(params.colorId) : null;
   return (
     <div className="flex flex-col gap-4 p-8">
-      <ColorForm color={color.data} />
+      <ColorForm color={color} />
     </div>
   );
 };

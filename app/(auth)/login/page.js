@@ -1,11 +1,11 @@
-import { getUser } from '@/utils/auth';
-import LoginClient from './_components/Client';
 import { redirect } from 'next/navigation';
+import LoginClient from './_components/Client';
+import { auth } from  '@/lib/auth';
 
 const LoginPage = async () => {
-  const user = await getUser();
+  const session = await auth();
 
-  if (user) {
+  if (session) {
     redirect('/');
   }
 
