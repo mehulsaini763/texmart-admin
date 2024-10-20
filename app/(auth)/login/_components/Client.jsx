@@ -83,6 +83,10 @@ const LoginClient = () => {
             </div>
           </form>
         </Form>
+        <div className="p-2">
+          <div className="text-xs text-red-500 italic font-medium underline">[FOR TEST USER]</div>
+          <div className="text-xs text-red-500 italic font-medium "> Email: "test@login.com" | Password: "password"</div>
+        </div>
       </div>
     </div>
   );
