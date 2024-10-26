@@ -14,7 +14,7 @@ const orderSchema = new Schema(
         required: true,
       },
     ],
-    paymenyId: {
+    paymentId: {
       type: String,
       required: true,
       unique: true,
