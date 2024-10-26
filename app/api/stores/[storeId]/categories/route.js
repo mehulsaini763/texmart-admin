@@ -1,7 +1,6 @@
 import { auth } from '@/lib/auth';
 import dbConnect from '@/lib/db';
 import Category from '@/models/categories.model';
-import Billboard from '@/models/billboards.model';
 import mongoose from 'mongoose';
 
 // CREATE CATEGORIES
@@ -14,7 +13,7 @@ export const GET = async (req, { params }) => {
     }
 
     await dbConnect();
-    const categories = await Category.find({ storeId }).populate('billboardId');
+    const categories = await Category.find({ storeId })
 
     return Response.json({ message: 'Category Fetched', data: categories, success: true }, { status: 201 });
   } catch (error) {
