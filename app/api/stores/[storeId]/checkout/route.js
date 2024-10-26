@@ -2,6 +2,7 @@ import { razorpay } from '@/lib/razorpay';
 import Product from '@/models/products.model';
 import Order from '@/models/orders.model';
 import { NextResponse } from 'next/server';
+import dbConnect from '@/lib/db';
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -53,6 +54,7 @@ export async function POST(req, { params }) {
     const paymentId = paymentLink.id;
     const url = paymentLink.short_url;
 
+    await dbConnect();
     // Create the order
     await Order.create({
       storeId,
