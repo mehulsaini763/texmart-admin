@@ -5,6 +5,7 @@ export const POST = async (req, { params }) => {
   try {
     const { storeId } = params;
     const data = req.json();
+    console.log(data);
 
     const paymentId = data.payload.payment_link.entity.id;
     const status = data.payload.payment_link.entity === 'paid';
