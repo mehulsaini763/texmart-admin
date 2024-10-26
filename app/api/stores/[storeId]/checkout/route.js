@@ -27,6 +27,7 @@ export async function POST(req, { params }) {
       return new NextResponse('Store ID, phone, and address are required', { status: 400 });
     }
 
+    await dbConnect();
     // Fetch products and calculate total amount
     const products = await Product.find({ _id: { $in: productIds } });
 
@@ -54,7 +55,6 @@ export async function POST(req, { params }) {
     const paymentId = paymentLink.id;
     const url = paymentLink.short_url;
 
-    await dbConnect();
     // Create the order
     await Order.create({
       storeId,
