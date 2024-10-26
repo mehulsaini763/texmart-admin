@@ -1,6 +1,9 @@
 import { auth } from '@/lib/auth';
 import dbConnect from '@/lib/db';
 import Product from '@/models/products.model';
+import Category from '@/models/categories.model';
+import Size from '@/models/sizes.model';
+import Color from '@/models/colors.model';
 import mongoose from 'mongoose';
 
 // GET PRODUCTS
