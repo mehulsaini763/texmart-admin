@@ -6,7 +6,7 @@ import { formatter } from '@/lib/utils';
 
 const ProductsPage = async ({ params }) => {
   await dbConnect();
-  const products = await Product.find({ storeId: params.storeId });
+  const products = await Product.find({ storeId: params.storeId }).populate(['colorId', 'sizeId', 'categoryId']);
   const formatedProducts = products.map((item) => ({
     id: item._id,
     name: item.name,

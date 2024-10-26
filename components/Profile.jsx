@@ -26,7 +26,6 @@ const Profile = ({ user }) => {
       router.refresh();
     }
   };
-  console.log(user);
   
   return (
     <div className="text-right">

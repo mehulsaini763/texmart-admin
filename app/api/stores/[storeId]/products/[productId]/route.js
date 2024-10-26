@@ -13,7 +13,7 @@ export const GET = async (req, { params }) => {
     }
 
     await dbConnect();
-    const product = await Product.findById(productId);
+    const product = await Product.findById(productId).populate(['categoryId', 'sizeId', 'colorId']);
 
     return Response.json({ message: 'Product Fetched', data: product, success: true }, { status: 201 });
   } catch (error) {

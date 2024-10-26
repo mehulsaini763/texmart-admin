@@ -13,7 +13,7 @@ export const GET = async (req, { params }) => {
     }
 
     await dbConnect();
-    const category = await Category.findById(categoryId);
+    const category = await Category.findById(categoryId).populate('billboardId');
 
     return Response.json({ message: 'Category Fetched', data: category, success: true }, { status: 201 });
   } catch (error) {

@@ -1,6 +1,26 @@
 import { auth } from '@/lib/auth';
 import dbConnect from '@/lib/db';
 import Category from '@/models/categories.model';
+import mongoose from 'mongoose';
+
+// CREATE CATEGORIES
+export const GET = async (req, { params }) => {
+  try {
+    const { storeId } = params;
+
+    if (!mongoose.isValidObjectId(storeId)) {
+      return Response.json({ success: false, message: 'Invalid Category Id' }, { status: 400 });
+    }
+
+    await dbConnect();
+    const categories = await Category.find({ storeId });
+
+    return Response.json({ message: 'Category Fetched', data: categories, success: true }, { status: 201 });
+  } catch (error) {
+    console.log(error);
+    return Response.json({ success: false, message: 'Some Error Occurred' }, { status: 400 });
+  }
+};
 
 // CREATE CATEGORY
 export const POST = async (req) => {

@@ -10,10 +10,15 @@ const orderSchema = new Schema(
     orderItems: [
       {
         type: Schema.Types.ObjectId,
-        ref: 'OrderItem',
+        ref: 'Product',
         required: true,
       },
     ],
+    paymenyId: {
+      type: String,
+      required: true,
+      unique: true,
+    },
     isPaid: {
       type: Boolean,
       required: true,
