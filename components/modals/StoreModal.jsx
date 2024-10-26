@@ -11,7 +11,6 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import Modal from '@/components/ui/modal';
 import useStoreModal from '@/hooks/useStoreModal';
- ;
 import axios from 'axios';
 
 const formSchema = z.object({
@@ -29,8 +28,7 @@ const StoreModal = () => {
 
   const onSubmit = async (data) => {
     try {
-      const user = await getUser();
-      const response = await axios.post('/api/stores');
+      const response = (await axios.post('/api/stores', data)).data;
       toast.success(response.message);
       window.location.assign(`/${response.data._id}`);
     } catch (error) {
