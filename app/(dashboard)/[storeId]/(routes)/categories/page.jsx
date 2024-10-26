@@ -2,6 +2,7 @@ import { format } from 'date-fns';
 import CategoryClient from './_components/CategoryClient';
 import dbConnect from '@/lib/db';
 import Categories from '@/models/categories.model';
+import Billboard from '@/models/billboards.model';
 
 const CategoriesPage = async ({ params }) => {
   await dbConnect();

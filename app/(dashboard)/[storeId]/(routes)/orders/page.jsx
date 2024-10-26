@@ -1,6 +1,7 @@
 import OrderClient from './_components/OrderClient';
 import dbConnect from '@/lib/db';
 import Order from '@/models/orders.model';
+import Product from '@/models/products.model';
 
 const OrdersPage = async ({ params }) => {
   await dbConnect();

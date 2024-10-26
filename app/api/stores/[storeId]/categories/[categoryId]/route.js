@@ -1,6 +1,7 @@
 import mongoose from 'mongoose';
 import dbConnect from '@/lib/db';
 import Category from '@/models/categories.model';
+import Billboard from '@/models/billboards.model';
 import { auth } from '@/lib/auth';
 
 // GET CATEGORY

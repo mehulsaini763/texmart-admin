@@ -2,6 +2,9 @@ import { format } from 'date-fns';
 import ProductClient from './_components/ProductClient';
 import dbConnect from '@/lib/db';
 import Product from '@/models/products.model';
+import Category from '@/models/categories.model';
+import Size from '@/models/sizes.model';
+import Color from '@/models/colors.model';
 import { formatter } from '@/lib/utils';
 
 const ProductsPage = async ({ params }) => {
